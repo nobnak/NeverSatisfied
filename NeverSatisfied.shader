@@ -1,4 +1,4 @@
-﻿Shader "Hidden/EverLasting" {
+﻿Shader "Hidden/NeverSatisfied" {
 	Properties {
 		_MainTex ("Texture", 2D) = "white" {}
         _TargetTex ("Target Tex", 2D) = "black" {}
