@@ -11,6 +11,7 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+            #pragma multi_compile __ TRANSPARENT
 			
 			#include "UnityCG.cginc"
 
@@ -38,7 +39,13 @@
 				float4 csrc = tex2D(_MainTex, i.uv);
                 float4 ctar = tex2D(_TargetTex, i.uv);
 
-				return lerp((1.0 - _Lasting.y * unity_DeltaTime.x) * csrc, ctar, saturate(_Lasting.x * ctar.a));
+                #ifdef TRANSPARENT
+                csrc = float4(csrc.rgb, (1.0 - _Lasting.y * unity_DeltaTime.x) * csrc.a);
+                #else
+                csrc = (1.0 - _Lasting.y * unity_DeltaTime.x) * csrc;
+                #endif
+
+                return lerp(csrc, float4(ctar.rgb, 1), saturate(_Lasting.x * ctar.a));
 			}
 			ENDCG
 		}
