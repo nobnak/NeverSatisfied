@@ -1,7 +1,7 @@
 ﻿Shader "Hidden/NeverSatisfied" {
 	Properties {
-		_MainTex ("Texture", 2D) = "white" {}
-        _TargetTex ("Target Tex", 2D) = "black" {}
+		_MainTex ("Current Texture", 2D) = "white" {}
+        _SourceTex ("Source Texture", 2D) = "black" {}
         _Lasting ("Params", Vector) = (1, 1, 0, 0)
 	}
 	SubShader {
@@ -11,12 +11,11 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-            #pragma multi_compile __ TRANSPARENT
 			
 			#include "UnityCG.cginc"
 
             sampler2D _MainTex;
-            sampler2D _TargetTex;
+            sampler2D _SourceTex;
             float4 _Lasting;
 
 			struct appdata {
@@ -36,16 +35,13 @@
 			}
 
 			float4 frag (v2f i) : SV_Target {
-				float4 csrc = tex2D(_MainTex, i.uv);
-                float4 ctar = tex2D(_TargetTex, i.uv);
+				float4 ccur = tex2D(_MainTex, i.uv);
+                float4 csrc = tex2D(_SourceTex, i.uv);
 
-                #ifdef TRANSPARENT
-                csrc = float4(csrc.rgb, (1.0 - _Lasting.y * unity_DeltaTime.x) * csrc.a);
-                #else
-                csrc = (1.0 - _Lasting.y * unity_DeltaTime.x) * csrc;
-                #endif
+                ccur *= (1.0 - _Lasting.x);
+                ccur = lerp(ccur, float4(csrc.rgb, 1), saturate(_Lasting.y * csrc.a));
 
-                return lerp(csrc, float4(ctar.rgb, 1), saturate(_Lasting.x * ctar.a));
+				return ccur;
 			}
 			ENDCG
 		}
