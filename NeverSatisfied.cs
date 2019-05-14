@@ -64,8 +64,8 @@ namespace NeverSatisfiedPackage {
 				TextureOnUpdate(this);
 		}
 		protected void ReleaseTextures() {
-			tmp0.Destroy();
-			tmp1.Destroy();
+			tmp0.DestroySelf();
+			tmp1.DestroySelf();
 		}
         protected void SwapTextures () {
             var t = tmp0;
